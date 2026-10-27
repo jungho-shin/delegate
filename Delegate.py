@@ -27,7 +27,7 @@ class abDelegate(IDelegate  , ABC):
 
 class Func(abDelegate):
 
-    def __init__(self ,  lambda_func,*args, **kwargs):
+    def __init__(self, lambda_func, *args, **kwargs):
         super().__init__(lambda_func,*args, **kwargs)
     #
 

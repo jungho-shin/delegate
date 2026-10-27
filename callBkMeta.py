@@ -1,5 +1,6 @@
 from abc import ABC
 
+from Delegate import Func
 from callBack import dbDelete, dbInsert, dbBackup, dbDrop, CallBackCahin, CallBack
 from callBkDef import E_CALLBK_TYPE
 
@@ -19,10 +20,10 @@ class abMeta(IMeta, ABC):
 class CallbackMetaTB(abMeta):
 
     tbs = {
-        E_CALLBK_TYPE.INSERT : CallBack(dbInsert, tb_nm ="tb1"),
-        E_CALLBK_TYPE.DELETE : CallBack(dbDelete, tb_nm ="tb2"),
-        E_CALLBK_TYPE.BACKUP : CallBack(dbBackup, tb_nm ="tb3"),
-        E_CALLBK_TYPE.DROP : CallBack(dbDrop, tb_nm ="tb4"),
+        E_CALLBK_TYPE.INSERT : CallBack(Func(dbInsert), tb_nm ="tb1"),
+        E_CALLBK_TYPE.DELETE : CallBack(Func(dbDelete), tb_nm ="tb2"),
+        E_CALLBK_TYPE.BACKUP : CallBack(Func(dbBackup), tb_nm ="tb3"),
+        E_CALLBK_TYPE.DROP : CallBack(Func(dbDrop), tb_nm ="tb4"),
     }
 
     @staticmethod

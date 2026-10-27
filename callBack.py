@@ -1,62 +1,50 @@
 from abc import ABC
+from typing import Any
 
-from Delegate import IDelegate, abDelegate
-# from deleGate.callBkMeta import CallbackMetaTB
-
-
-class ICallBack( abDelegate , ABC):
-
-    def Invoke(*args, **kwargs):...
+from Delegate import IDelegate, abDelegate, Func
 
 
-    pass
+class ICallBack(ABC):
+
+    def Invoke(self, *args, **kwargs):...
 
 
-class abCallBack( ICallBack , ABC):
+class abCallBack(ICallBack, ABC):
 
-    def __init__(self, lambda_func ,  *args, **kwargs):
-        abDelegate.__init__(self,lambda_func ,  *args, **kwargs)
+    def __init__(self, delegate: IDelegate, *args, **kwargs):
+        self._delegate = delegate
+        self._args = args
+        self._kwargs = kwargs
 
-    #
-    def Invoke(self, *args, **kwargs):
-        return abDelegate.Invoke(self,*args, **kwargs)
+    def Invoke(self, *args, **kwargs) -> Any:
+        args = self._args if not args else args
+        kwargs = self._kwargs if not kwargs else kwargs
+        return self._delegate.Invoke(*args, **kwargs)
 
 
-
-
-class abCallBackChain( ICallBack , ABC):
+class abCallBackChain(ICallBack, ABC):
 
     def __init__(self):
-        abDelegate.__init__(self,lambda_func = None )
-
         self._container = []
-
-        pass
 
     def AppendCallBack(self, callback):
         self._container.append(callback)
         return self
-
 
     def Invoke(self, *args, **kwargs):
         for callbk in self._container:
             callbk.Invoke(*args, **kwargs)
 
 
+class CallBack(abCallBack):
+    def __init__(self, delegate, *args, **kwargs):
+        super().__init__(delegate, *args, **kwargs)
 
-class CallBack( abCallBack ):
-    def __init__(self, lambda_func ,  *args, **kwargs):
-        abDelegate.__init__(self,lambda_func ,  *args, **kwargs)
 
-    # def Invoke(*args, **kwargs):
-    #     return super().Invoke(*args, **kwargs)
-
-class CallBackCahin(abCallBackChain ):
+class CallBackCahin(abCallBackChain):
 
     def __init__(self):
         super().__init__()
-
-
 
 
 def dbDelete( tb_nm ):
@@ -68,7 +56,6 @@ def dbInsert( tb_nm ):
 
     print(f"dbInsert : {tb_nm}")
     pass
-
 
 def dbBackup( tb_nm ):
 
@@ -88,12 +75,12 @@ def dbTest():
 def main():
 
 
-    tb1 = CallBack( dbDelete , tb_nm ="tb1" )
-    tb2 = CallBack( dbInsert , tb_nm ="tb2" )
-    tb3 = CallBack( dbBackup , tb_nm ="tb3" )
-    tb4 = CallBack( dbDrop , tb_nm ="tb4" )
-    tb5 = CallBack( dbDelete )
-    #
+    tb1 = CallBack(Func(dbDelete), tb_nm ="tb1" )
+    tb2 = CallBack(Func(dbInsert), tb_nm ="tb2" )
+    tb3 = CallBack(Func(dbBackup), tb_nm ="tb3" )
+    tb4 = CallBack(Func(dbDrop), tb_nm ="tb4" )
+    tb5 = CallBack(Func(dbDelete))
+
     # tb1.Invoke()
     # tb2.Invoke()
     # tb3.Invoke()
@@ -121,13 +108,13 @@ def main():
 
     #############################
 
-    cb_1_depth_chain = CallBackCahin()
-
-    cb_2_depth_chain_1 = CallbackMetaTB.create()
-    cb_2_depth_chain_2 = CallbackMetaTB.create()
-    cb_1_depth_chain.AppendCallBack(cb_2_depth_chain_1)
-    cb_1_depth_chain.AppendCallBack(cb_2_depth_chain_2)
-    cb_1_depth_chain.Invoke()
+    # cb_1_depth_chain = CallBackCahin()
+    #
+    # cb_2_depth_chain_1 = CallbackMetaTB.create()
+    # cb_2_depth_chain_2 = CallbackMetaTB.create()
+    # cb_1_depth_chain.AppendCallBack(cb_2_depth_chain_1)
+    # cb_1_depth_chain.AppendCallBack(cb_2_depth_chain_2)
+    # cb_1_depth_chain.Invoke()
 
     #############################
 
